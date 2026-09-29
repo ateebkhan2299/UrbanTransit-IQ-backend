@@ -18,11 +18,13 @@ JWT_ISSUER = os.getenv("JWT_ISSUER", "urbantransit-iq")
 JWT_AUDIENCE = os.getenv("JWT_AUDIENCE", "urbantransit-iq-api")
 JWT_EXPIRE_SECONDS = int(os.getenv("JWT_EXPIRE_SECONDS", "3600"))
 
-if not JWT_SECRET_KEY:
-    raise RuntimeError("JWT_SECRET_KEY must be configured before starting the API")
-
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 admin_router = APIRouter(prefix="/api/admin", tags=["admin"])
+
+def _require_jwt_secret() -> str:
+    if not JWT_SECRET_KEY:
+        raise RuntimeError("JWT_SECRET_KEY must be configured before starting the API")
+    return JWT_SECRET_KEY
 
 import bcrypt
 
@@ -49,13 +51,13 @@ def create_access_token(data: dict, expires_delta_seconds: Optional[int] = None)
         "iss": JWT_ISSUER,
         "aud": JWT_AUDIENCE,
     })
-    return jwt.encode(payload, JWT_SECRET_KEY, algorithm="HS256")
+    return jwt.encode(payload, _require_jwt_secret(), algorithm="HS256")
 
 def decode_access_token(token_str: str) -> dict:
     try:
         return jwt.decode(
             token_str,
-            JWT_SECRET_KEY,
+            _require_jwt_secret(),
             algorithms=["HS256"],
             issuer=JWT_ISSUER,
             audience=JWT_AUDIENCE,
