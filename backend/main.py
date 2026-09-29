@@ -14,7 +14,7 @@ sys.path.insert(1, ROOT_DIR)
 from backend.routers import admin_management, auth, comparison, dashboard  # noqa: E402
 from backend.routers import delays, forecast, health, map as map_router  # noqa: E402
 from backend.routers import notifications, occupancy, recommendations  # noqa: E402
-from backend.routers import reports, routes, whatif  # noqa: E402
+from backend.routers import analysis, reports, routes, whatif  # noqa: E402
 
 app = FastAPI(
     title="UrbanTransit IQ API",
@@ -63,6 +63,7 @@ def read_root():
 # Routers
 # ---------------------------------------------------------------------------
 app.include_router(auth.router)
+app.include_router(analysis.router)
 app.include_router(auth.admin_router)
 app.include_router(health.router)
 app.include_router(dashboard.router)

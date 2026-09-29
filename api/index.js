@@ -1,1 +1,0 @@
-module.exports = (req, res) => { res.send("Backend API running on Vercel"); };
